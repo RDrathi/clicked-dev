@@ -1,5 +1,5 @@
 public with sharing class BillAPI {
-  public static void getBills() {
+  public static HttpResponse getBills() {
     //start by creating an HttpRequest object and set the endpoint and method.
     HttpRequest req = new HttpRequest();
     req.setEndpoint('callout:Billing_API');
@@ -75,6 +75,7 @@ public with sharing class BillAPI {
           insertedBill.Balance__c
       );
     }
+    return res;
   }
 
   //this is what's known as a wrapper class. A wrapper class

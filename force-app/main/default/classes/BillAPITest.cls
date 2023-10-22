@@ -1,0 +1,38 @@
+@isTest
+public with sharing class BillAPITest {
+  @isTest
+  static void testBillAPICallout() {
+    //Set mock callout class
+    Test.setMock(HttpCalloutMock.class, new YourHttpCalloutMockImpl());
+    HttpResponse response = BillAPI.getBills();
+    // Verify that the response received contains fake values
+    String contentType = response.getHeader('Content-Type');
+    Assert.isTrue(contentType == 'application/json');
+    String actualValue = response.getBody();
+    System.debug(response.getBody());
+    String expectedValue =
+      '[' +
+      '{' +
+      '"billId": "64fe8c72be1ae0125246d285",' +
+      '"accountName": "Account 67",' +
+      '"balance": "$336.08"' +
+      '},' +
+      '{' +
+      '"billId": "64fe8c72703103b206105ebf",' +
+      '"accountName": "Account 99",' +
+      '"balance": "$151.97"' +
+      '},' +
+      '{' +
+      '"billId": "64fe8c722fbe9ae981e5e418",' +
+      '"accountName": "Account 105",' +
+      '"balance": "$269.72"' +
+      '}' +
+      ']';
+    Assert.areEqual(
+      expectedValue,
+      actualValue,
+      'MockBillDetailResponse did not work'
+    );
+    Assert.areEqual(200, response.getStatusCode());
+  }
+}
