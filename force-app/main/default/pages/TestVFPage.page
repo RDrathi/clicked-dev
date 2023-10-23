@@ -1,0 +1,20 @@
+<apex:page controller="RecTypeController">
+  <apex:form id="caseForm">
+    <apex:commandButton
+      value="Get Record Type Id"
+      action="{!testRecordType}"
+      reRender="recId"
+    ></apex:commandButton>
+    <apex:outputPanel id="recId">
+      <apex:outputText>{!recordTypeId}</apex:outputText>
+    </apex:outputPanel>
+    <apex:commandButton
+      value="Get Status"
+      action="{!testStatus}"
+      reRender="cStatus"
+    ></apex:commandButton>
+    <apex:outputPanel id="cStatus">
+      <apex:outputText>{!status}</apex:outputText>
+    </apex:outputPanel>
+  </apex:form>
+</apex:page>
