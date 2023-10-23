@@ -1,19 +1,20 @@
 @isTest
 public with sharing class BillAPITest {
-  @TestSetup
-  static void makeData() {
+  @isTest
+  static void testBillAPICallout() {
     List<Account> accListtoInsert = new List<Account>();
-    for (Integer i = 1; i < 3; i++) {
+    for (Integer i = 1; i <= 3; i++) {
       Account newAcc = new Account(Name = 'Account ' + i, Active__c = 'Yes');
       accListtoInsert.add(newAcc);
     }
-    Database.insert(accListtoInsert, true);
-  }
-  @isTest
-  static void testBillAPICallout() {
+    Database.insert(accListtoInsert, false);
+
+    Test.startTest();
     //Set mock callout class
     Test.setMock(HttpCalloutMock.class, new YourHttpCalloutMockImpl());
     HttpResponse response = BillAPI.getBills();
+    Test.stopTest();
+
     // Verify that the response received contains fake values
     String contentType = response.getHeader('Content-Type');
     Assert.isTrue(contentType == 'application/json');
