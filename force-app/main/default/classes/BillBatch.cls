@@ -55,7 +55,7 @@ public with sharing class BillBatch implements Database.Batchable<sObject>, Data
     //we will also create a Map<Id, String> called emailMap, where we'll hold the Account Id (key) and account email (value).
     Map<Id, String> emailMap = new Map<Id, String>();
     for (Account accRec : accwithBills) {
-      billMap.put(accRec.Id, accRec.Email__c);
+      emailMap.put(accRec.Id, accRec.Email__c);
     }
 
     //Next, we are going to prepare to call our BillEmailer.sendEmails(Map<String, Blob> emailsWithBills)
@@ -78,5 +78,9 @@ public with sharing class BillBatch implements Database.Batchable<sObject>, Data
     //finally, we will call our BillEmailer.sendEmails(sendMap) method. Remember, this method is VOID,
     //so there will be no return value;
     BillEmailer.sendEmails(sendMap);
+    for (String emailAddress : sendMap.keySet()) {
+      System.debug(emailAddress);
+    }
+    System.debug('Size of the sendMap is:- ' + sendMap.size());
   }
 }
