@@ -1,4 +1,5 @@
 public with sharing class BillBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful {
+  @testVisible
   public List<Id> receivesBillByEmail = new List<Id>();
   public final String query;
 
@@ -26,7 +27,11 @@ public with sharing class BillBatch implements Database.Batchable<sObject>, Data
         this.receivesBillByEmail.add(accRec.Id);
       }
     }
-    BillAPI.getBills();
+
+    //Test context can not call a webservice method
+    if (!Test.isRunningTest()) {
+      BillAPI.getBills();
+    }
   }
 
   public void finish(Database.BatchableContext bc) {
@@ -71,7 +76,14 @@ public with sharing class BillBatch implements Database.Batchable<sObject>, Data
       String emailAdd = emailMap.get(accId);
       Id billId = billMap.get(accId);
       PageReference pageRef = new PageReference('/apex/BillVFP?id=' + billId);
-      Blob pdfBlob = pageRef.getContentAsPDF();
+      Blob pdfBlob;
+
+      //PageReference.getContentAsPDF() cannot work directly for a test so it is replaced by pdfBlob = blob.valueOf('Unit.Test')
+      if (Test.isRunningTest()) {
+        pdfBlob = Blob.valueOf('Unit.Test');
+      } else {
+        pdfBlob = pageRef.getContentAsPDF();
+      }
       sendMap.put(emailAdd, pdfBlob);
     }
 

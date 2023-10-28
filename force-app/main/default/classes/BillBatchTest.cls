@@ -23,7 +23,27 @@ public with sharing class BillBatchTest {
         Account__c = accList[i].Id,
         Bill_Id__c = 'Test Bill Id - ' + i
       );
+      bList.add(billRec);
     }
     Database.insert(bList);
+  }
+
+  @isTest
+  static void testBatch() {
+    String query = 'SELECT Id, Bill_By_Email__c FROM Account WHERE Account.Active__c = \'Yes\' AND Bill_By_Email__c != null';
+    List<Account> accListTest = [
+      SELECT Id, Bill_By_Email__c
+      FROM Account
+      WHERE Account.Active__c = 'Yes' AND Bill_By_Email__c != NULL
+    ];
+    Test.startTest();
+    BillBatch bb = new BillBatch(query);
+    Id batchId = Database.executeBatch(bb);
+    Test.stopTest();
+    Assert.areEqual(
+      4,
+      accListTest.size(),
+      'Accounts did not get inserted successfully'
+    );
   }
 }
